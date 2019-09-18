@@ -1,0 +1,280 @@
+{%load static%}
+<link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}?after">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+<!--나눔 고딕-->
+<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<body class="signupcss">
+<div class="container-fluid" style="padding-top:1.5%;">
+    <div class="row">
+         <div class="col-md-4">
+		 </div>
+		 <div class="col-md-4" id="signup">
+		 	<div class="row">
+			 	<div class="col-md-2">
+				</div>
+				<div class="col-md-10">
+					<div id="gohome">
+						<a href="{% url 'convergence:main' %}"><img id='gohomelogo' src="{% static 'convergence/img/gohome.png'%}"></a>
+					</div>
+					<form name="formsignup" action="{% url 'convergence:signup' %}" method="POST">
+					{% csrf_token %}
+					<div class="form-group">
+						<label class="signuplabel">학번 / 교직원 번호</label>
+						<input type="text" id="convergence_id" name="convergence_id" class="form-control" style="border-radius: 10px!important;" onblur="idcheck();" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');" maxlength="20">
+						<div id="id_right" style="font-size:11px; font-weight:600; display:none;" >
+							<label style="color:#0081ff;">사용가능</label>
+						</div>
+						<div id="id_error" style="font-size:11px; font-weight:600; display:none;" >
+							<label style="color:#ff0002; padding-right:7px; ">사용불가</label><label style="color:#666666;">아이디 중복</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">비밀번호</label>
+						<input type="password" id="convergence_pw" name="convergence_pw" class="form-control" style="border-radius: 10px!important;" maxlength="15">
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">비밀번호 확인</label>
+						<input type="password" id="convergence_pwcheck" name="convergence_pwcheck" class="form-control" style="border-radius: 10px!important; height:55px;" onblur="pwcheck();" maxlength="15">
+						<div id="pw_right" style="font-size:11px; font-weight:600; display:none;" >
+							<label style="color:#0081ff;">사용가능</label>
+						</div>
+						<div id="pw_error" style="font-size:11px; font-weight:600; display:none;" >
+							<label style="color:#ff0002; padding-right:7px;">사용불가</label><label style="color:#666666;">비밀번호 다름</label>
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">이름</label>
+						<input type="text" id="usr_name" name="usr_name" class="form-control" style="border-radius: 10px!important;" maxlength="5">
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">휴대전화</label>
+						<input id="usr_phonenumber" name="usr_phonenumber" type="text" class="form-control" placeholder="전화번호 입력" style="border-radius: 10px!important;" maxlength="11" onKeyup="this.value=this.value.replace(/[^0-9]/g,'');"/>
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">학과</label>
+						<input type="text" id="usr_major" name="usr_major" class="form-control" style="border-radius: 10px!important;" maxlength="20">
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">학년 / 직책</label>
+						<select class="form-control" id="usr_grade" name="usr_grade" style="border-radius: 10px!important; height:55px;">
+							<option selected>학년 / 직책 선택</option>
+							<option value="1">1</option>
+							<option value="2">2</option>
+							<option value="3">3</option>
+							<option value="4">4</option>
+							<option value="5">5</option>
+							<option value="6">교수</option>
+							<option value="7">직원</option>
+						</select>
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">수강 과목</label>
+						<select class="form-control" id="usr_class" name="usr_class" style="border-radius: 10px!important; height:55px;">
+							<option selected>선택</option>
+							<option value="1">지식재산 디자인기반 소프트웨어</option>
+							<option value="2">정보처리와 소프트웨어 지식재산</option>
+							<option value="3">글로벌 엔터테인먼트</option>
+							<option value="4">개인 비행체 프로토타입 설계</option>
+						</select>
+					</div>
+					<div class="form-row">
+						<div class="form-group col-md-7">
+							<label class="signuplabel">추가 강의 수강 여부</label><label style="font-size:12px; font-color:#999999">(선택)</label>
+						</div>
+						<div class="form-group col-md-5" id="sub_usr_class" name="sub_usr_class">
+							<label class="radio-inline signuplabel" style="padding-right:15%;"><input type="radio" name="sub_usr_class" value="sub_usr_class_agree" style="width:15px; height:15px; vertical-align:middle;"> 있음</label>
+							<label class="radio-inline signuplabel"><input type="radio" name="sub_usr_class" value="sub_usr_class_disagree" style="width:15px; height:15px; vertical-align:middle;" checked> 없음</label>
+						</div>
+					</div>
+					<div class="form-group" id="select_sub_class" style="display:none;">
+						<label class="signuplabel">추가 수강 과목</label>
+						<select class="form-control" id="select_sub_usr_class" name="select_sub_usr_class" style="border-radius: 10px!important; height:55px;">
+							<option selected>선택</option>
+							<option value="1">지식재산 디자인기반 소프트웨어</option>
+							<option value="2">정보처리와 소프트웨어 지식재산</option>
+							<option value="3">글로벌 엔터테인먼트</option>
+							<option value="4">개인 비행체 프로토타입 설계</option>
+						</select>
+					</div>
+					<div class="form-group" style="margin-top:3%;">
+						<button type="button" class="btn btn-primary" onclick="Sign_up()" style="width:100%;border-radius: 10px!important;">가입하기</button>
+					</div>
+				</div>
+				</form>
+			</div>
+			<div class="col-md-2">
+			</div>
+		</div>
+		<div class="col-md-4">
+		</div>
+	</div>
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <!-- jQuery -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+  <!-- iamport.payment.js -->
+  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+<script>
+	function idcheck(){
+		var id_right = document.getElementById('id_right');
+		var iderror = document.getElementById('id_error');
+		id = $('#convergence_id').val();
+		if(id != ''){
+			$.ajax({
+				type : "POST",
+				url : "{% url 'convergence:SignUp_idcheck' %}",
+				data : {
+					'csrfmiddlewaretoken': '{{ csrf_token }}',
+					'idcheck' : id,
+				},
+				success : function(response)
+				{
+					if(response.msg == 'N')
+					{
+						iderror.style.display = 'block';
+						id_right.style.display = 'none';
+					}else{
+						iderror.style.display = 'none';
+						id_right.style.display = 'block';
+					}
+					
+				},
+			});
+		}
+	}
+
+	function pwcheck(){
+		pw = $('#convergence_pw').val();
+		pw_check = $('#convergence_pwcheck').val();
+		if(pw != ''){
+			var pw_error = document.getElementById('pw_error');
+			var pw_right = document.getElementById('pw_right');
+			if(pw != pw_check){
+				pw_error.style.display = 'block';
+				pw_right.style.display = 'none';
+			}
+			else{
+				pw_error.style.display = 'none';
+				pw_right.style.display = 'block';
+			}
+		}
+	}
+
+	/* Checkbox change event */
+	$('input[name="sub_usr_class"]').change(function() {
+		// 모든 radio를 순회한다.
+			var select_sub_class_agree = document.getElementById('select_sub_class');
+			var value = $(this).val();              // value
+			// var checked = $(this).attr('checked');   // jQuery 1.6 미만 (jQuery 1.6 이상에서는 checked, undefined로 return됨)
+			// var checked = $(this).is('checked');
+			if(value == "sub_usr_class_agree"){
+				select_sub_class_agree.style.display = 'block';
+			}
+			else{
+				select_sub_class_agree.style.display = 'none';
+			}
+				
+	});
+
+	function showLoadingMask(){
+        var h = $(document).height();
+        var w = window.document.body.clientWidth;
+
+        var mask = $("<div id=mask style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0';></div>");
+        var loadingImg = $("<div id='loadingImg' style='position : fixed; left : 47%; top : 30%; z-index : 10000;'><img src={% static 'convergence/img/loading.gif' %} width : 30px; height : 30px;></div>");
+        
+        $('body').append(mask).append(loadingImg);
+        $("#mask").css({
+            'width' : w,
+            'height' : h,
+            'opacity' : '0.1'
+        });
+
+        $("#mask").show();
+        $("#loadingImg").show();
+    }
+
+	function removeLoadingMask(){
+        $("#mask, #loadingImg").hide();
+        $("#mask, #loadingImg").remove();
+    }
+
+	function Sign_up(){
+		showLoadingMask();
+		//검사용 변수
+		id_final = false;
+		pw_final = false;
+		phonenumber_final = false;
+		grade_final = false;
+		major_final = false;
+		class_final = false;
+
+		//아이디 검사
+		var id_right = document.getElementById('id_right');
+		if (id_right.style.display=='block'){
+			id_final = true;
+		}
+		else{
+			id_final = false;
+		}
+
+		//비밀번호 검사
+		var pw_right = document.getElementById('pw_right');
+		if (pw_right.style.display=='block'){
+			pw_final = true;
+		}
+		else{
+			pw_final = false;
+		}
+
+		//휴대폰번호
+		phonenumber_check=$('#usr_phonenumber').val();
+		if(phonenumber_check != ''){
+			phonenumber_final = true;
+		}
+		else{
+			phonenumber_final = false;
+		}
+
+		//학과
+		major_check=$('#usr_major').val();
+		if(major_check != ''){
+			major_final = true;
+		}
+		else{
+			major_final = false;
+		}
+
+		//수강과목
+		class_check=$('#usr_class').val();
+		if(class_check != '선택'){
+			class_final = true;
+		}
+		else{
+			class_final = false;
+		}
+
+		//직업
+		grade_check=$('#usr_grade').val();
+		if(grade_check != '학년 / 직책 선택'){
+			grade_final = true;
+		}
+		else{
+			grade_final = false;
+		}
+
+		if(id_final==true && pw_final==true && phonenumber_final==true && grade_final==true && major_final==true && class_final==true){
+			document.formsignup.submit();
+		}
+		else{
+			alert('양식을 다시확인해 주세요');
+			removeLoadingMask();
+		}
+		
+	}
+</script>

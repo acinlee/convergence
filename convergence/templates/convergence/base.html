@@ -1,0 +1,109 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}">
+    <meta charset="utf-8">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!--아임포트-->
+    <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+    <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+    <!--나눔고딕-->
+    <link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<!--오류 발생 알람메시지-->
+{% if messages %}
+    {% for message in messages %} 
+        <script>alert("{{message}}");</script>
+    {% endfor %}
+{% endif %}
+<!--알람 끝-->
+</head>
+<body style="background-color: #F5F6F7;">
+<div id="mainwidth" >
+    <nav class="site-header sticky-top py-1" id="navstyle">
+        <div class="container-fluid">
+            <div class="row">
+                <div class="col-md-6">
+                </div>
+                <div class="col-md-6" id="nav">
+                    {% if request.session.convergence_id %}
+                        <label class="menu">{{request.session.convergence_id}}님</label>
+                        <span class="bar"></span>
+                        <a class="menu" href="{% url 'convergence:tousr_modify' %}">비밀번호 변경</a>
+                        <span class="bar"></span>
+                        <a class="menu" href="{% url 'convergence:logout' %}">로그아웃</a>
+                        {% if request.session.rank == "1"%}
+                            <span class="bar"></span>
+                            <a class="menu" href="{% url 'convergence:usr_list_view1' %}">수강생 목록 확인</a>
+                            <span class="bar"></span>
+                            <a class="menu" href="{% url 'convergence:toSignUp' %}">회원가입</a>
+                        {% endif %}
+                    {% else %}
+                        <a class="menu" href="{% url 'convergence:loginpage' %}">로그인</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+        <div class="container-fluid convergencemain">
+            <div class="row">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10" style="text-align:center;padding-left:3%;" id="main_title">
+                    <a href="{% url 'convergence:main' %}" style="text-decoration:none !important; color:#4d4d4d; "><label style="cursor:pointer;">청주대학교 융복합교육센터</label></a>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+            
+            <div class="row" style="padding-top:2%;">
+                <div class="col-md-1">
+                </div>
+                <div class="col-md-10" style="text-align:center; padding-left:3%;">
+                <img src="{% static 'convergence/img/main.png'%}" style="width:75%;">
+                    <div id="main_background">
+                    </div>
+                </div>
+                <div class="col-md-1">
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-2">
+                </div>
+                <div class="col-md-8" id="nav" style="padding-left:3%;">
+                    <div class="row">
+                        <div class="col-md-3" style="border:1px solid #7c7c7c;">
+                            <a class="convergencesite" href="{% url 'convergence:board_menu1' page_num=1 %}">지식재산 디자인기반 소프트웨어 시스템 구현</a>
+                        </div>
+                        <div class="col-md-3" style="border:1px solid #7c7c7c;">
+                            <a class="convergencesite" href="{% url 'convergence:board_menu2' page_num=1 %}">파이썬 기반 텍스트 정보처리와 소프트웨어 지식재산</a>
+                        </div>
+                        <div class="col-md-3" style="border:1px solid #7c7c7c;">
+                            <a class="convergencesite" href="{% url 'convergence:board_menu3' page_num=1 %}">글로벌 엔터테인먼트 융복합<br> 프로젝트</a>
+                        </div>
+                        <div class="col-md-3" style="border:1px solid #7c7c7c;"> 
+                            <a class="convergencesite" href="{% url 'convergence:board_menu4' page_num=1 %}">개인 비행체 프로토타입 <br>설계</a>
+                        </div>
+                    </div>
+                </div>
+                </div>
+                <div class="col-md-2">
+                </div>
+                <div style="padding-left:18%;">
+                    <label style="color:red;">* 본인이 수강하는 과목명을 클릭하세요.<br></label>
+                </div>
+                
+                <div style="padding-left:18%;">
+                    <label style="color:red;">* 해당 과목 게시판이 아래에 나타납니다.</label>
+                </div>
+            </div>
+        </div>
+    {% block content %}
+    {% endblock %}
+</div>
+</body>
+</html>

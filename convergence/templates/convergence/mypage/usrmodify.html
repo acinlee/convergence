@@ -1,0 +1,125 @@
+{%load static%}
+<link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}?after">
+<link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+<script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+<link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.0.8/css/all.css">
+<!--나눔 고딕-->
+<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<body class="signupcss">
+<div class="container-fluid" style="padding-top:1.5%;">
+    <div class="row" style=" padding-top:10%;">
+         <div class="col-md-4">
+		 </div>
+		 <div class="col-md-4" id="signup">
+		 	<div class="row">
+			 	<div class="col-md-2">
+				</div>
+				<div class="col-md-8">
+					<div id="gohome">
+						<a href="{% url 'convergence:main' %}"><img id='gohomelogo' src="{% static 'convergence/img/gohome.png'%}"></a>
+					</div>
+                    <div>
+                        <label style="font-weight:600; font-size:33px; color:#4d4d4d; padding-bottom:7%;">비밀번호 변경</label>
+                    <div>
+					<form name="formusrmodify" action="{% url 'convergence:usr_modify' %}" method="POST">
+					{% csrf_token %}
+					<div class="form-group">
+						<label class="signuplabel">비밀번호</label>
+						<input type="password" id="convergence_pw" name="convergence_pw" class="form-control" style="border-radius: 10px!important;" maxlength="15">
+					</div>
+					<div class="form-group">
+						<label class="signuplabel">비밀번호 확인</label>
+						<input type="password" id="convergence_pwcheck" name="convergence_pwcheck" class="form-control" style="border-radius: 10px!important; height:55px;" onkeyup="pwcheck();" maxlength="15">
+						<div id="pw_right" style="font-size:11px; font-weight:600; display:none;" >
+							<label style="color:#0081ff;">사용가능</label>
+						</div>
+						<div id="pw_error" style="font-size:11px; font-weight:600; display:none;" >
+							<label style="color:#ff0002; padding-right:7px;">사용불가</label><label style="color:#666666;">비밀번호 다름</label>
+						</div>
+					</div>
+					<div class="form-group" style="margin-top:3%;">
+						<button type="button" class="btn btn-primary" onclick="password_modify()" style="width:100%;border-radius: 10px!important;">비밀번호 변경</button>
+					</div>
+				</div>
+				</form>
+                <div class="col-md-2">
+				</div>
+			</div>
+		</div>
+		<div class="col-md-4">
+		</div>
+	</div>
+</div>
+</body>
+
+<script src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
+  <!-- jQuery -->
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.12.4.min.js" ></script>
+  <!-- iamport.payment.js -->
+  <script type="text/javascript" src="https://cdn.iamport.kr/js/iamport.payment-1.1.5.js"></script>
+<script>
+	function pwcheck(){
+		pw = $('#convergence_pw').val();
+		pw_check = $('#convergence_pwcheck').val();
+		if(pw != ''){
+			var pw_error = document.getElementById('pw_error');
+			var pw_right = document.getElementById('pw_right');
+			if(pw != pw_check){
+				pw_error.style.display = 'block';
+				pw_right.style.display = 'none';
+			}
+			else{
+				pw_error.style.display = 'none';
+				pw_right.style.display = 'block';
+			}
+		}
+	}
+
+	function showLoadingMask(){
+        var h = $(document).height();
+        var w = window.document.body.clientWidth;
+
+        var mask = $("<div id=mask style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0';></div>");
+        var loadingImg = $("<div id='loadingImg' style='position : fixed; left : 47%; top : 30%; z-index : 10000;'><img src={% static 'convergence/img/loading.gif' %} width : 30px; height : 30px;></div>");
+        
+        $('body').append(mask).append(loadingImg);
+        $("#mask").css({
+            'width' : w,
+            'height' : h,
+            'opacity' : '0.1'
+        });
+
+        $("#mask").show();
+        $("#loadingImg").show();
+    }
+
+	function removeLoadingMask(){
+        $("#mask, #loadingImg").hide();
+        $("#mask, #loadingImg").remove();
+    }
+
+	function password_modify(){
+		showLoadingMask();
+		//검사용 변수
+		pw_final = false;
+
+		//비밀번호 검사
+		var pw_right = document.getElementById('pw_right');
+		if (pw_right.style.display=='block'){
+			pw_final = true;
+		}
+		else{
+			pw_final = false;
+		}
+
+		if(pw_final==true){
+			document.formusrmodify.submit();
+		}
+		else{
+			alert('양식을 다시확인해 주세요');
+			removeLoadingMask();
+		}
+		
+	}
+</script>

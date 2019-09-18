@@ -1,0 +1,353 @@
+{% extends "convergence/base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!--나눔 고딕-->
+<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<!--주영's 아이콘-->
+<script src="https://kit.fontawesome.com/01bdf36058.js"></script>
+
+  <div class="container-fluid coachingmain">
+    <div class="row">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8">
+        <div class="form-group" style="padding-top:3%;">
+          {% if type_num == 1%}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">지식재산 디자인기반 소프트웨어 시스템</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 2 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">파이썬 기반 텍스트 정보처리와 소프트웨어 지식재산</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 3 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">글로벌 엔터테인먼트</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 4 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">개인 비행체 프로토타입 설계</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% endif %}
+        </div>
+        <div class="row"style="padding-top:1%; color:#7c7c7c; padding-bottom:1%; text-align:center; width:98%; margin-left:1%; border-top:2px solid #c6c6c6; border-bottom:2px solid #c6c6c6;">
+            <div class="col-md-8" style="text-align:left; font-size:23px; color:#4d4d4d;">
+                <label style="margin-top:1%; font-weight:600;">제목 :&nbsp;</label><label style="margin-top:1%; font-weight:600;">{{board.Board_Title}}</label>
+            </div>
+            <div class="col-md-2">
+                <label style="margin-top:5%;">작성자 : {{board.Board_User.Convergence_Name}}</label>
+            </div>
+            <div class="col-md-2">
+                <label style="margin-top:5%;">작성 날짜 : {{board.Board_CreateDate|date:"Y/m/d"}}</label>
+            </div>
+        </div>
+        <div class="row" style="text-align:center; padding-top:1%; padding-bottom:1%; width:98%; margin-left:1%; border-bottom:2px solid #c6c6c6;">
+            <div class="col-md-11" style="text-align:left; padding-bottom:20%; color:#4d4d4d; overflow:scroll; padding-left:1%">
+                {{board.Board_Content|safe}}
+            </div>
+            <div class="col-md-1">
+                <div style="position:relative; top:90%; font-size:12px;">
+                    {% if board.Board_User.Convergence_ID == request.session.convergence_id %}
+                        <a href="{% url 'convergence:editBoard' board.id %}" style="text-decoration:none !important; color:#7c7c7c;">수정</a> 
+                        <a style="padding-left:8%; text-decoration:none !important; color:#7c7c7c; cursor:pointer;" onclick="deleteUserPwCheck();">삭제</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="row" style="width:98%; padding-top:1%; margin-left:1%; padding-bottom:0.5%; border-bottom:2px solid #c6c6c6;">
+            <div class="col-md-1.5" style="margin-left:2%;">
+                <label style="font-weight:600;">첨부파일</label>
+            </div>
+            <div class="col-md-8" style="margin-left:2%;">
+                {% if board.Board_Files %}
+                    <a style="text-align:left; text-decoration:none !important; color:#4d4d4d; font-weight:600;" href='{{ board.Board_Files.url}}' download="{{board.Board_Files}}">{{ board.Board_Files}}</a>
+                {% else %}
+                    <label style="text-align:left; color:#4d4d4d; font-weight:600;">첨부파일이 없습니다.</label>
+                {% endif %}
+            </div>
+            <div class="col-md-2.5">
+            </div>
+        </div>
+        <div style="width:98%; margin-left:1%; font-weight:600; font-size:23px; padding-top:1%; padding-bottom:0.5%; border-bottom:1px solid #c6c6c6;">
+            <label style="margin-left:2%;">댓글</label>
+        </div>
+        {% if comment %}
+            {% for comment_ in comment %}
+                <div class="row" style="width:98%; padding-top:1%; margin-left:1%; padding-bottom:0.5%; border-bottom:1px solid #c6c6c6;">
+                    <div class="col-md-1" style="margin-left:1%;">
+                        <label style="font-weight:600;">{{comment_.comment_user.Convergence_Name}}</label>
+                    </div>
+                    <div class="col-md-8" style="margin-left:2%;">
+                        <label id="before_comment{{comment_.id}}" style="text-align:left; color:#4d4d4d; font-weight:600; display:block;">{{comment_.comment}}</label>
+                        <textarea id="after_comment{{comment_.id}}" style="display:none; width:100%; border-radius:10px; height:50%;" >{{comment_.comment}}</textarea>
+                        {% if comment_.convergence_comment_reply_set.all %}
+                            {% for comment_reply in comment_.convergence_comment_reply_set.all %}
+                                <div class="row" style="width:98%; padding-top:1%; margin-left:0%; padding-bottom:0.5%;">
+                                    <div class="col-md-1.5">
+                                        <i class="fas fa-share" style="transform: scaleY(-1);"></i><label style="font-weight:600;"></label><label style="font-weight:600;">{{comment_reply.reply_user.Convergence_Name}}</label>
+                                    </div>
+                                    <div class="col-md-8" id="before_reply{{comment_reply.id}}">
+                                        <label style="font-weight:600;">{{comment_reply.comment_reply}}</label>
+                                    </div>
+                                     <div class="col-md-8" id="after_reply{{comment_reply.id}}" style="display:none;">
+                                        <textarea id="comment_reply_edit_content{{comment_reply.id}}" style="width:60%;border-radius:10px;"></textarea>
+                                    </div>
+                                    <div class="col-md-2" id="reply_normal_function{{comment_reply.id}}" style="padding-left:7%; font-size:10px;">
+                                        {% if comment_reply.reply_user.Convergence_ID == request.session.convergence_id%}
+                                            <label id="replyeditbutton{{comment_reply.id}}" style="color:#7c7c7c; padding-left:10%; cursor:pointer;" onclick="showreplyedit('{{comment_reply.id}}');">수정</label>
+                                            <label id="replyremovebutton{{comment_reply.id}}" style="color:#7c7c7c; padding-left:10%;cursor:pointer;" onclick="replyremove('{{comment_reply.id}}');">삭제</label>
+                                        {% endif %}
+                                    </div>
+                                    <div class="col-md-2" id="reply_edit_function{{comment_reply.id}}" style="padding-left:7%; font-size:10px; display:none;">
+                                        {% if comment_reply.reply_user.Convergence_ID == request.session.convergence_id%}
+                                            <label onclick="replyedit('{{comment_reply.id}}')" style="color:#7c7c7c;padding-left:10%; cursor:pointer;">수정</label>
+                                            <label onclick="hidereplyedit('{{comment_reply.id}}');" style="color:#7c7c7c;padding-left:10%; cursor:pointer;">취소</label>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        {% endif %}
+                    </div>
+                    <div id="edit_function{{comment_.id}}" class="col-md-2" style="padding-left:7%; font-size:10px; display:none;">
+                        <label onclick="commentedit('{{comment_.id}}')" style="color:#7c7c7c;padding-left:10%; cursor:pointer;">수정</label>
+                        <label onclick="hideedit('{{comment_.id}}');" style="color:#7c7c7c;padding-left:10%; cursor:pointer;">취소</label>
+                    </div>
+                    <div id="normal_function{{comment_.id}}" class="col-md-2" style="padding-left:7%; font-size:10px; display:block;">
+                        {% if comment_.comment_user.Convergence_ID == request.session.convergence_id %}
+                            <label id="editbutton{{comment_.id}}" style="color:#7c7c7c; padding-left:10%; cursor:pointer;" onclick="showedit('{{comment_.id}}');">수정</label>
+                            <label id="removebutton{{comment_.id}}" style="color:#7c7c7c; padding-left:10%; cursor:pointer;" onclick="commentremove('{{comment_.id}}');">삭제</label>
+                        {% endif %}
+                        <!--<a href="{% url 'convergence:editBoard' board.id %}" style="text-decoration:none !important; color:#7c7c7c;">신고</a> -->
+                        <label id="replybutton{{comment_.id}}" style="color:#7c7c7c; cursor:pointer; padding-left:10%;" onclick="showreply('{{comment_.id}}');">답글</label>
+                    </div>
+                    <div id="replycancel{{comment_.id}}" class="col-md-2" style="padding-left:7%; font-size:10px; display:none;">
+                        <label id="replycancelbutton{{comment_.id}}" style="color:#7c7c7c; cursor:pointer; padding-left:10%;" onclick="hidereply('{{comment_.id}}');">답글 취소</label>
+                    </div>
+                    <div class="row" id="show_reply{{comment_.id}}" style="width:98%; padding-top:1%; margin-left:1%; display:none;">
+                        <div class="col-md-12" style="margin-left:10%;">
+                            <textarea id="comment_reply_content{{comment_.id}}" style="width:60%;border-radius:10px;"></textarea><button type="button" class="btn btn-outline" onclick="replywrite('{{comment_.id}}');" style="margin-left:2%; margin-bottom:3.3%; background-color:white;  border-color:#dee2e6; border-radius:10px; font-size:18px; bottom:3%;">답글달기</button>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        {% endif %}
+        <form name="comment_wr" action="{% url 'convergence:comment_write' board.id %}" method="POST">
+        {% csrf_token %}
+        <div class="row" style="width:98%; padding-top:1%; margin-left:1.8%; padding-bottom:1%; border-bottom:1px solid #c6c6c6;">
+            <div class="col-md-1.5" style="margin-left:2%;">
+                <label style="font-weight:600;"></label>
+            </div>
+            <div class="col-md-9" style="margin-left:8%;">
+                <textarea id="comment_content" name="comment_content" style="width:100%; border-radius:10px; height:100%;"></textarea>
+            </div>
+            <div class="col-md-2.8" style="margin-left:2%; padding-top:0.5%;">
+                <button type="button" class="btn btn-outline" onclick="comment_write();" style="background-color:white; border-color:#dee2e6; width:100%; border-radius:10px; font-size:18px">작성하기</button>
+            </div>
+        </div>
+        </form>
+        <div class="row" style="text-align:center;width:98%; padding-top:2%; padding-bottom:2%; margin-left:1%;">
+            <div class="col-md-12">
+                {% if type_num == 1%}
+                    <a href="{% url 'convergence:board_menu1' page_num=1 %}"><button type="button" class="btn btn-outline" style="background-color:white; border-color:#dee2e6; width:10%; border-radius:10px; font-size:18px">전체목록</button></a>
+                {% elif type_num == 2 %}
+                    <a href="{% url 'convergence:board_menu2' page_num=1 %}"><button type="button" class="btn btn-outline" style="background-color:white; border-color:#dee2e6; width:10%; border-radius:10px; font-size:18px">전체목록</button></a>
+                {% elif type_num == 3 %}
+                    <a href="{% url 'convergence:board_menu3' page_num=1 %}"><button type="button" class="btn btn-outline" style="background-color:white; border-color:#dee2e6; width:10%; border-radius:10px; font-size:18px">전체목록</button></a>
+                {% else %}
+                    <a href="{% url 'convergence:board_menu4' page_num=1 %}"><button type="button" class="btn btn-outline" style="background-color:white; border-color:#dee2e6; width:10%; border-radius:10px; font-size:18px">전체목록</button></a>
+                {% endif %}       
+            </div>
+        </div>
+        <div class="row" style="text-align:center; color:#7c7c7c; width:98%; padding-top:1%; padding-bottom:1%; margin-left:1%; border-top:2px solid #c6c6c6; border-bottom:2px solid #c6c6c6;">
+            <div class="col-md-1">
+                <label style="margin-top:10%;"><i style="font-size:23px;" class="fas fa-angle-up"></i></label>
+            </div>
+            <div class="col-md-1">
+                <label style="margin-top:10%;">이전글</label>
+            </div>
+            <div class="col-md-8" style="text-align:left; color:#4d4d4d;">
+                {% if previous_board %}
+                    {% for previous in previous_board %}
+                        <a href="{% url 'convergence:viewBoard' previous.id %}" style="text-decoration:none; color:#4d4d4d;"><label style="margin-top:1%; font-weight:600; cursor:pointer;">{{previous.Board_Title}}</label></a>
+                    {% endfor %}
+                {% else %}
+                        <label style="margin-top:1%; font-weight:600;">이전글이 없습니다.</label>
+                {% endif %}
+            </div>
+            <div class="col-md-1">
+                {% if previous_board %}
+                    {% for previous in previous_board %}
+                        <label style="margin-top:10%;">{{previous.Board_User.Convergence_Name}}</label>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-1">
+                {% if previous_board %}
+                    {% for previous in previous_board %}
+                        <label style="margin-top:10%;">{{previous.Board_CreateDate|date:"Y/m/d"}}</label>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+        <div class="row" style="text-align:center;width:98%; color:#7c7c7c; padding-top:1%; padding-bottom:1%; margin-left:1%; border-bottom:2px solid #c6c6c6;">
+            <div class="col-md-1">
+                <label style="margin-top:10%;"><i style="font-size:23px;" class="fas fa-angle-down"></i></label>
+            </div>
+            <div class="col-md-1">
+                <label style="margin-top:10%;">다음글</label>
+            </div>
+            <div class="col-md-8" style="text-align:left; color:#4d4d4d;">
+                {% if next_board %}
+                    {% for next in next_board %}
+                        <a href="{% url 'convergence:viewBoard' next.id %}" style="text-decoration:none; color:#4d4d4d;"><label style="margin-top:1%; font-weight:600; cursor:pointer;">{{next.Board_Title}}</label></a>
+                    {% endfor %}
+                {% else %}
+                        <label style="margin-top:1%; font-weight:600;">다음글이 없습니다.</label>
+                {% endif %}
+            </div>
+            <div class="col-md-1">
+                {% if next_board %}
+                    {% for next in next_board %}
+                        <label style="margin-top:10%;">{{next.Board_User.Convergence_Name}}</label>
+                    {% endfor %}
+                {% endif %}
+            </div>
+            <div class="col-md-1">
+                {% if next_board %}
+                    {% for next in next_board %}
+                        <label style="margin-top:10%;">{{next.Board_CreateDate|date:"Y/m/d"}}</label>
+                    {% endfor %}
+                {% endif %}
+            </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+  </div>
+
+<script>
+    function showDeleteMask(){
+        var h = $(document).height();
+        var w = window.document.body.clientWidth;
+
+        var mask = $("<div id=mask onclick='deletemask();' style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0';></div>");
+        var loadingImg = $("<div id='loadingImg' style='position : fixed; left : 45%; top : 30%; z-index : 10000;'><img src={% static 'convergence/img/design/loading.gif' %} width : 30px; height : 30px;></div>");
+        var DeletePopUp = $("<div id='DeletePopUp' style='position : fixed; left : 45%; top : 30%; z-index : 10000; font-size:15px;'><form action={% url 'convergence:DeleteBoard' board.id%} method='POST'><label class='deletePwlabel'>비밀번호 입력시 글 삭제</label><img src={% static 'convergence/img/Xmark.png' %} onclick='deletemask();' style='position:relative; left: 10%; width : 20px; height : 20px; cursor:pointer;'><input type='password' id='convergence_pw' name='convergence_pw' class='form-control' style='border-radius: 10px!important;' maxlength='15'><button type='submit' class='btn btn-primary' style='width:100%; margin-top:5%; border-radius: 10px!important;'>입력완료</button></form></div>");
+        
+        $('body').append(mask).append(DeletePopUp);
+        $("#mask").css({
+            'width' : w,
+            'height' : h,
+            'opacity' : '0.1'
+        });
+
+        $("#mask").show();
+        $("#DeletePopUp").show();
+    }
+
+    function comment_write(){
+        if($("#comment_content").val() != ''){
+            document.comment_wr.submit();
+        }
+        else{
+            alert('내용을 입력해주세요!')
+        }
+    }
+
+    //댓글 삭제
+    function commentremove(comment_num){
+      var delConfirm = confirm('정말 삭제하시겠습니까?');
+      if (delConfirm){
+        alert("댓글이 삭제되었습니다.");
+        location.href = "/Convergence/comment_remove/" + comment_num;
+      }
+      else{ 
+        return;
+      }
+    }
+
+    //답글 삭제
+    function replyremove(reply_num){
+      var delConfirm = confirm('정말 삭제하시겠습니까?');
+      if (delConfirm){
+        alert("답글이 삭제되었습니다.");
+        location.href = "/Convergence/comment_reply_remove/" + reply_num;
+      }
+      else{ 
+        return;
+      }
+    }
+
+    //댓글 수정 기능
+    function commentedit(comment_num){ 
+        var comment = $("#after_comment"+comment_num).val();
+        location.href = "/Convergence/comment_edit/" + comment_num + "?content="+comment;
+    }
+
+    //답글 작성 기능
+    function replywrite(comment_num){ 
+        var comment = $("#comment_reply_content"+comment_num).val();
+        location.href = "/Convergence/comment_reply/" + comment_num + "?content="+comment;
+    }
+
+    //답글 수정 기능
+    function replyedit(reply_num){ 
+        var comment = $("#comment_reply_edit_content"+reply_num).val();
+        location.href = "/Convergence/comment_reply_edit/" + reply_num + "?content="+comment;
+    }
+
+    //댓글 수정 
+    function showedit(comment_num){ 
+        $("#before_comment"+comment_num).css("display", "none");
+        $("#after_comment"+comment_num).css("display", "block");
+        $("#edit_function"+comment_num).css("display", "block");
+        $("#normal_function"+comment_num).css("display", "none");
+    }
+    //댓글 수정 취소
+    function hideedit(comment_num){ 
+        $("#before_comment"+comment_num).css("display", "block");
+        $("#after_comment"+comment_num).css("display", "none");
+        $("#edit_function"+comment_num).css("display", "none");
+        $("#normal_function"+comment_num).css("display", "block");
+    }
+
+    //답글 수정 
+    function showreplyedit(reply_num){ 
+        $("#before_reply"+reply_num).css("display", "none");
+        $("#after_reply"+reply_num).css("display", "block");
+        $("#reply_edit_function"+reply_num).css("display", "block");
+        $("#reply_normal_function"+reply_num).css("display", "none");
+    }
+    //답글 수정 취소
+    function hidereplyedit(reply_num){ 
+        $("#before_reply"+reply_num).css("display", "block");
+        $("#after_reply"+reply_num).css("display", "none");
+        $("#reply_edit_function"+reply_num).css("display", "none");
+        $("#reply_normal_function"+reply_num).css("display", "block");
+    }
+
+    //답글 클릭
+    function showreply(comment_num){ 
+        $("#show_reply"+comment_num).css("display", "block");
+        $("#normal_function"+comment_num).css("display", "none");
+        $("#replycancel"+comment_num).css("display", "block");
+    }
+    //답글 취소
+    function hidereply(comment_num){ 
+        $("#show_reply"+comment_num).css("display", "none");
+        $("#normal_function"+comment_num).css("display", "block");
+        $("#replycancel"+comment_num).css("display", "none");
+    }
+
+	function removeDeleteMask(){
+        $("#mask, #DeletePopUp").hide();
+        $("#mask, #DeletePopUp").remove();
+    }
+
+    function deleteUserPwCheck(){
+        showDeleteMask();
+    }
+
+    function deletemask(){
+        removeDeleteMask();
+    }
+</script>
+{% endblock %}

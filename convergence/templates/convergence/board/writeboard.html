@@ -1,0 +1,151 @@
+{% extends "convergence/base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!--서머노트-->
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/css/bootstrap.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.11.0/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta/js/bootstrap.min.js"></script>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/summernote/0.8.12/summernote-bs4.js"></script>
+<!--나눔 고딕-->
+<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<style>
+/* ace editor 사이즈 조절 */
+.ace_editor {
+    width: 98%;
+}
+.note-editor{
+    width: 98%;
+}
+</style>
+  <div class="container-fluid coachingmain" style="padding-bottom:3%; vartical-align:middle;">
+    <div class="row">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8">
+        <div class="form-group" style="padding-top:3%;">
+          {% if type_num == 1%}
+            <label style="font-weight:600; font-size:42px; color:#4d4d4d;">게시글 작성</label>
+          {% elif type_num == 2 %}
+            <label style="font-weight:600; font-size:42px; color:#4d4d4d;">게시글 작성</label>
+          {% elif type_num == 3 %}
+            <label style="font-weight:600; font-size:42px; color:#4d4d4d;">게시글 작성</label>
+          {% else %}
+            <label style="font-weight:600; font-size:42px; color:#4d4d4d;">게시글 작성</label>
+          {% endif %}
+        </div>
+        <div style="width:98%; margin-left:1%; border-bottom: 2px solid #c6c6c6; ">
+        </div>
+        <form name="board_view" action="{% url 'convergence:write_board' %}" method="POST" enctype="multipart/form-data" >
+        {% csrf_token %}
+        <div class="row" style="padding-top:1%; vartical-align:middle; width:100%; padding-left:1.5%; font-size:18px; ">
+            <div class="col-md-1" style="padding-top:1%;text-align:center;">
+                <label>제목</label>
+            </div>
+            <div class="col-md-11 form-group" style="padding-top:1%; ">
+                <input type="text" id="Board_Title" name="Board_Title" class="form-control" style="width:100%; border-radius:10px; ">
+            </div>
+        </div>
+        <div class="row" style="width:100%; padding-left:1.5%; font-size:18px; text-align:center;">
+            <div class="col-md-1">
+                <label>분류</label>
+            </div>
+            <div class="col-md-11 form-group" >
+                <select id='board_classcode' name='board_classcode' class="form-control" style="border-radius:10px; width:100%;">
+                    {% if user_info.rank == "1" %}
+                      <option selected value="" disabled>선택</option>
+                      <option value="1">지식 재산 디자인 기반 소프트웨어 시스템</option>
+                      <option value="2">파이썬 기반 텍스트 정보처리</option>
+                      <option value="3">글로벌 엔터테인먼트</option>
+                      <option value="4">개인 비행체 프로토타입 설계</option>
+                    {% else %}
+                      <option selected value="{{user_info.Convergence_ClassCode}}">{{user_info.get_Convergence_ClassCode_display}}</option>
+                    {% endif %}
+                </select>
+            </div>
+        </div>
+        <div class="row" style="width:100%; padding-left:1.5%; font-size:18px; text-align:center;">
+            <div class="col-md-1 form-group">
+              <label>파일</label>
+            </div>
+            <div class="col-md-9 form-group input-file" style="margin:0; padding:0; padding-left:1.2%;">
+              <input type="text" class="form-control" id="file-name" style="width:100%; border-radius:10px;" readonly>
+            </div>
+            <div class="col-md-1 form-group input-file" style="margin:0px; padding:0px;">
+              <label for="file_upload" class="file-label" style="width:90%; height:71%;">찾아보기</label> 
+              <input type="file" name="file_upload" id="file_upload" onchange="fileUpload(this);" class="file-upload" style="display:none;">
+            </div>
+        </div>
+        <div style="width:98%; margin-left:1%; border-bottom: 2px solid #c6c6c6; ">
+        </div>
+        <div class="row">
+            <div class="col-md-12" style="padding-left:4.3%; padding-top:1%">
+                <div class="form-group">
+                    <label style="font-size:18px; color:#4d4d4d;">내용</label>
+                    <div id="Board_Content"></div>
+                    <input type="hidden" id="final_Board_Content" name="Board_Content" >
+                      <script>
+                        $('#Board_Content').summernote({
+                          lang: 'ko-KR',
+                          tabsize: 2,
+                          height: 600
+                        });
+                      </script>
+                </div>
+            </div>
+        </div>
+        <div class="row" style=" vertical-align:middle">
+          <div class="col-md-2" style="padding-left:4.5%;">
+          </div>
+          <div class="col-md-8" style="padding-top:2%; text-align:center;">
+          </div>
+          <div class="col-md-2" style="text-align:right; padding-right:3%;">
+            <input type="button" onclick="boardcontent();" class="btn btn-outline" style="background-color:#dee2e6; width:70%; border-radius:10px; font-size:18px" value="작성하기">
+          </div>
+        </div>
+      </div>
+      </form>
+      <div class="col-md-2">
+      </div>
+    </div>
+  </div>
+<script>
+  function showLoadingMask(){
+      var h = $(document).height();
+      var w = window.document.body.clientWidth;
+
+      var mask = $("<div id=mask style='position:absolute; z-index:9000; background-color:#000000; display:none; left:0; top:0';></div>");
+      var loadingImg = $("<div id='loadingImg' style='position : fixed; left : 47%; top : 30%; z-index : 10000;'><img src={% static 'convergence/img/loading.gif' %} width : 30px; height : 30px;></div>");
+      
+      $('body').append(mask).append(loadingImg);
+      $("#mask").css({
+          'width' : w,
+          'height' : h,
+          'opacity' : '0.1'
+      });
+
+      $("#mask").show();
+      $("#loadingImg").show();
+  }
+
+	function removeLoadingMask(){
+        $("#mask, #loadingImg").hide();
+        $("#mask, #loadingImg").remove();
+    }
+  function fileUpload(usr_file){
+    $("#file-name").val($(usr_file).val().split('/').pop().split('\\').pop()); 
+  }
+
+  function boardcontent(){
+    var markupStr = $('#Board_Content').summernote('code');
+    $("#final_Board_Content").val(markupStr);
+    showLoadingMask();
+    document.board_view.submit();
+  }
+
+</script>
+{% endblock %}
