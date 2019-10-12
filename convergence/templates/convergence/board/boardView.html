@@ -56,8 +56,10 @@
                 <label style="font-weight:600;">첨부파일</label>
             </div>
             <div class="col-md-8" style="margin-left:2%;">
-                {% if board.Board_Files %}
-                    <a style="text-align:left; text-decoration:none !important; color:#4d4d4d; font-weight:600;" href='{{ board.Board_Files.url}}' download="{{board.Board_Files}}">{{ board.Board_Files}}</a>
+                {% if board_file %}
+                    {% for file in board_file%}
+                        <a style="text-align:left; text-decoration:none !important; color:#4d4d4d; font-weight:600;" href='{{ file.Convergence_File.url}}' download="{{file.Convergence_File}}">{{ file.Convergence_File}}</a><br>
+                    {% endfor %}
                 {% else %}
                     <label style="text-align:left; color:#4d4d4d; font-weight:600;">첨부파일이 없습니다.</label>
                 {% endif %}

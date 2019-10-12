@@ -14,6 +14,24 @@ class User(models.Model):
     Convergence_PhoneNumber = models.CharField(max_length=20, null=True, blank=False)
     rank_list = (('1', '시스템관리자'),('2', '사용자'))
     rank = models.CharField(max_length=10, choices=rank_list, default='2', null=True, blank=False)
+    # xls 추출 시 해당 랭크·직업의 숫자 값이 아닌 한글 값
+    @staticmethod
+    def getStringofGrade(self):
+        if self.Convergence_grade == "6":
+            return '교수'
+        elif self.Convergence_grade == "7":
+            return '직원'
+        return self.Convergence_grade + '학년'
+    @staticmethod
+    def getStringofClassCode(self):
+        if self.Convergence_ClassCode == None:
+            return '-'
+        return self.get_Convergence_ClassCode_display()
+    @staticmethod
+    def getStringofSubClassCode(self):
+        if self.Convergence_SubClassCode == None:
+            return '-'
+        return self.get_Convergence_SubClassCode_display()
 
 #커뮤니티
 class Convergence_Board(models.Model):
@@ -25,8 +43,12 @@ class Convergence_Board(models.Model):
     Board_CreateDate = models.DateTimeField(null=True, blank=False)
     Board_ClassificationList = (('1', '지식재산 디자인기반 소프트웨어'), ('2','정보처리와 소프트웨어 지식재산'), ('3','글로벌 엔터테인먼트'), ('4','개인 비행체 프로토타입 설계'),) #게시글 분류 코드
     Board_ClassCode = models.CharField(max_length=10, choices=Board_ClassificationList, default='분류없음', null=True, blank=True)
-    Board_Files = models.FileField(null=True, blank=True)
     Board_hits= models.PositiveIntegerField(default=0)
+
+#파일
+class Convergence_Files(models.Model):
+    Board_File = models.ForeignKey(Convergence_Board, on_delete=models.CASCADE, default="")
+    Convergence_File = models.FileField(null=True, blank=True)
 
 #게시판 댓글
 class Convergence_Comment(models.Model):

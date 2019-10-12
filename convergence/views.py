@@ -1,5 +1,7 @@
 from django.shortcuts import render, redirect, render_to_response
 from django.http import HttpResponse, Http404, HttpResponseRedirect
+from django.http import JsonResponse
+from django.views import View
 from .models import *
 from datetime import datetime
 import json, random, string
@@ -24,6 +26,12 @@ from django.template import RequestContext
 from django.db.models import Q
 
 import itertools
+#csv export
+import csv
+import xlwt
+# 다중 파일 업로드
+from .forms import FileForm
+from .models import Convergence_Files
 
 def page_not_found(request):
     response = render_to_response('convergence/page_404.html', {}, context_instance=RequestContext(request))
@@ -269,36 +277,33 @@ def board_menu4(request, page_num=1):
 # 게시글 작성 시
 def write_board(request):
     if request.method == 'POST': # method가 POST 방식이라면 글이 써진 것
-        form = PostForm(request.POST, request.FILES) # 이때는 해당 데이터를 다시 폼으로 넘겨보린다.
-        # 그리고 나서 올바른 값들이 들어왔는지 확인해야 한다.
-        if form.is_valid():
-            Convergence_Board = form.save(commit=False) # commit=Flase는 넘겨진 데이터를 바로 저장하지 말라는 뜻.
-            Convergence_Board.Board_Title = request.POST['Board_Title']
-            Convergence_Board.Board_Content = request.POST['Board_Content']
-            Convergence_Board.Board_CreateDate = timezone.now()
-            Convergence_Board.Board_ClassCode = request.POST['board_classcode']
-            Convergence_Board.Board_User = User.objects.get(Convergence_ID=request.session['convergence_id'])
-            try:
-                Convergence_Board.Board_Files = request.FILES['file_upload']
-            except:
-                pass
-            Convergence_Board.save()
-            if request.POST['board_classcode'] == "1":
-                return redirect('/board1/page/1')
-            elif request.POST['board_classcode'] == "2":
-                return redirect('/board2/page/1')
-            elif request.POST['board_classcode'] == "3":
-                return redirect('/board3/page/1')
-            elif request.POST['board_classcode'] == "4":
-                return redirect('/board4/page/1')
-    else:
-        form = PostForm()
+        convergence_obj = Convergence_Board.objects.create(
+            Board_Title = request.POST['Board_Title'],
+            Board_Content = request.POST['Board_Content'],
+            Board_CreateDate = timezone.now(),
+            Board_ClassCode = request.POST['board_classcode'],
+            Board_User = User.objects.get(Convergence_ID=request.session['convergence_id'])
+        )
+        for f in request.FILES.getlist('file'):
+            Convergence_Files.objects.create(
+                Board_File = convergence_obj,
+                Convergence_File=f
+           )
+        if request.POST['board_classcode'] == "1":
+            return redirect('/board1/page/1')
+        elif request.POST['board_classcode'] == "2":
+            return redirect('/board2/page/1')
+        elif request.POST['board_classcode'] == "3":
+            return redirect('/board3/page/1')
+        elif request.POST['board_classcode'] == "4":
+            return redirect('/board4/page/1')
 
-    return render(request, 'convergence/board/writeboard.html', {'form' : form, 'user_info' : getInfo(request)})
+    return render(request, 'convergence/board/writeboard.html', {'user_info' : getInfo(request)})
 
 # 커뮤니티 확인
 def ViewBoard(request, board_num):
     board = Convergence_Board.objects.get(id=board_num)
+    board_file = Convergence_Files.objects.filter(Board_File=board)
     if board.Board_ClassCode == '1':
         type_num=1
     elif board.Board_ClassCode == '2':
@@ -325,11 +330,12 @@ def ViewBoard(request, board_num):
     else:
         form = CommentForm()
 
-    return render(request, "convergence/board/boardView.html", {'board' : board, 'previous_board':previous_board, 'next_board':next_board,'comment':comment,'reply':reply, 'type_num':type_num, 'user_info' : getInfo(request)})
+    return render(request, "convergence/board/boardView.html", {'board' : board, 'board_file':board_file,'previous_board':previous_board, 'next_board':next_board,'comment':comment,'reply':reply, 'type_num':type_num, 'user_info' : getInfo(request)})
 
 # 커뮤니티 수정
 def EditBoard(request, board_num):
     toboard = Convergence_Board.objects.get(id=board_num)
+    board_file = Convergence_Files.objects.filter(Board_File=toboard)
     if toboard.Board_ClassCode == '1':
         type_num=1
     elif toboard.Board_ClassCode == '2':
@@ -342,18 +348,23 @@ def EditBoard(request, board_num):
         toboard.Board_Title = request.POST['Board_Title']
         toboard.Board_Content = request.POST['Board_content']
         toboard.Board_ClassCode = request.POST['board_classcode']
-        try:
-            toboard.Board_Files = request.FILES['file_upload']
-        except:
-            pass 
         toboard.save()
+        for f in request.FILES.getlist('file'):
+            Convergence_Files.objects.create(
+                Board_File = toboard,
+                Convergence_File=f
+           )
         messages.success(request, '게시판 수정이 완료되었습니다.')
-        return render('convergence/base.html', {'user_info' : getInfo(request)})
-    else:
-        form = PostForm(initial={'Board_Files':toboard.Board_Files }) 
+        return render(request, 'convergence/base.html', {'user_info' : getInfo(request)})
 
-    return render(request, 'convergence/board/board_edit.html', {'form' : form, 'user_info' : getInfo(request), 'board_num':board_num,
-                    'toboard':toboard, 'type_num':type_num})
+    return render(request, 'convergence/board/board_edit.html', {'board_file':board_file,'user_info' : getInfo(request), 'board_num':board_num, 'toboard':toboard, 'type_num':type_num})
+
+#게시판 수정시 파일 삭제
+def Board_edit_file_delete(request):
+    file_id = request.POST['file_id']
+    Convergence_Files.objects.get(id=file_id).delete()
+
+    return HttpResponse("success")
 
 # 커뮤니티 삭제
 @csrf_exempt
@@ -528,3 +539,53 @@ def usr_list_view4(request):
         return redirect('convergence:main')
 
         
+#user_list excel export
+
+def export_users_list(request, list_num):
+    response = HttpResponse(content_type='application/ms-excel')
+    response['Content-Disposition'] = 'attachment; filename="users.xls"'
+
+    wb = xlwt.Workbook(encoding='utf-8')
+    ws = wb.add_sheet('Users')
+
+    # Sheet header, first row
+    row_num = 0
+    col_num_ = 1
+    font_style = xlwt.XFStyle()
+    font_style.font.bold = True
+
+    columns = ['번호','과목', '학번', '학년/직책', '학과', '이름']
+
+    for col_num in range(len(columns)):
+        ws.write(row_num, col_num, columns[col_num], font_style)
+
+    # Sheet body, remaining rows
+    font_style = xlwt.XFStyle()
+
+    ws.col(1).width = int(35*260)
+    ws.col(2).width = int(18*260)
+    ws.col(4).width = int(18*260)
+    rows_class = User.objects.filter(Q(Convergence_ClassCode = list_num) | Q(Convergence_SubClassCode = list_num))
+
+    for row in rows_class:
+        row_num += 1
+        class_code = [str(col_num_), str(row.getStringofClassCode(row)), str(row.Convergence_ID), str(row.getStringofGrade(row)), str(row.Convergence_Dept), str(row.Convergence_Name)]
+        subclass_code = [str(col_num_), str(row.getStringofSubClassCode(row)), str(row.Convergence_ID), str(row.getStringofGrade(row)), str(row.Convergence_Dept), str(row.Convergence_Name)]
+        if row.Convergence_SubClassCode == list_num:
+            ws.write(row_num, 0, subclass_code[0], font_style)
+            ws.write(row_num, 1, subclass_code[1], font_style)
+            ws.write(row_num, 2, subclass_code[2], font_style)
+            ws.write(row_num, 3, subclass_code[3], font_style)
+            ws.write(row_num, 4, subclass_code[4], font_style)
+            ws.write(row_num, 5, subclass_code[5], font_style)
+        else: 
+            ws.write(row_num, 0, class_code[0], font_style)
+            ws.write(row_num, 1, class_code[1], font_style)
+            ws.write(row_num, 2, class_code[2], font_style)
+            ws.write(row_num, 3, class_code[3], font_style)
+            ws.write(row_num, 4, class_code[4], font_style)
+            ws.write(row_num, 5, class_code[5], font_style)
+        col_num_ += 1
+
+    wb.save(response)
+    return response

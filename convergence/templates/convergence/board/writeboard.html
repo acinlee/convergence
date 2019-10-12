@@ -69,16 +69,17 @@
             </div>
         </div>
         <div class="row" style="width:100%; padding-left:1.5%; font-size:18px; text-align:center;">
-            <div class="col-md-1 form-group">
-              <label>파일</label>
-            </div>
-            <div class="col-md-9 form-group input-file" style="margin:0; padding:0; padding-left:1.2%;">
-              <input type="text" class="form-control" id="file-name" style="width:100%; border-radius:10px;" readonly>
-            </div>
-            <div class="col-md-1 form-group input-file" style="margin:0px; padding:0px;">
-              <label for="file_upload" class="file-label" style="width:90%; height:71%;">찾아보기</label> 
-              <input type="file" name="file_upload" id="file_upload" onchange="fileUpload(this);" class="file-upload" style="display:none;">
-            </div>
+          <input id="fileupload" type="file" name="file" multiple style="display: none;"  onchange="fileUpload(this)">  
+          <label for="fileupload" class="btn btn-primary">파일 업로드</label>
+          <table id="file_" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>파일</th>
+                </tr>
+              </thead>
+              <tbody id="file-list">
+              </tbody>
+            </table>
         </div>
         <div style="width:98%; margin-left:1%; border-bottom: 2px solid #c6c6c6; ">
         </div>
@@ -146,6 +147,16 @@
     showLoadingMask();
     document.board_view.submit();
   }
+
+  function fileUpload(file){
+    
+    for(var item of file.files){
+      
+      var tag = $("<tr><td>"+item.name+"</td></tr>");
+      $("#file-list").append(tag);
+    }
+  }
+
 
 </script>
 {% endblock %}

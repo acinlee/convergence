@@ -61,16 +61,27 @@
             </div>
           </div>
           <div class="row" style="width:100%; padding-left:1.5%; font-size:18px; text-align:center;">
-            <div class="col-md-1 form-group">
-              <label>파일</label>
-            </div>
-            <div class="col-md-9 form-group input-file" style="margin:0; padding:0; padding-left:1%;">
-              <input type="text" class="form-control" id="file-name" style="width:100%; border-radius:10px;" value="{{toboard.Board_Files.name}}" readonly>
-            </div>
-            <div class="col-md-1 form-group input-file" style="margin:0px; padding:0px;">
-              <label for="file_upload" class="file-label" style="width:76%; height:71%;">찾아보기</label> 
-              <input type="file" name="file_upload" id="file_upload" onchange="fileUpload(this);" class="file-upload" style="display:none;">
-            </div>
+            <input id="fileupload" type="file" name="file" multiple style="display: none;"  onchange="fileUpload(this)">  
+            <label for="fileupload" class="btn btn-primary">파일 업로드</label>
+            <table id="file_" class="table table-bordered">
+              <thead>
+                <tr>
+                  <th>파일</th>
+                </tr>
+              </thead>
+              <tbody id="file-list">
+                {% if board_file %}
+                    {% for file in board_file%}
+                        <tr id="{{file.id}}">
+                        <td><a style="text-align:left; text-decoration:none !important; color:#4d4d4d; font-weight:600;" href='{{ file.Convergence_File.url}}' download="{{file.Convergence_File}}">{{ file.Convergence_File}}</a>
+                        <button type="button" class="btn btn-danger file_id" pk="{{file.id}}">삭제</button><br></td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                    <label style="text-align:left; color:#4d4d4d; font-weight:600;">첨부파일이 없습니다.</label>
+                {% endif %}
+              </tbody>
+            </table>
         </div>
         <div style="width:98%; margin-left:1%; border-bottom: 2px solid #c6c6c6; ">
         </div>
@@ -126,5 +137,33 @@
     document.board_edit.submit();
   }
 
+  function fileUpload(file){
+    
+    for(var item of file.files){
+      
+      var tag = $("<tr><td>"+item.name+"</td></tr>");
+      $("#file-list").append(tag);
+    }
+  }
+
+ $(".file_id").click(function(){
+    var file_id = $(this).attr("pk")
+    $.ajax({
+				type : "POST",
+				url : "{% url 'convergence:Board_edit_file_delete' %}",
+				data : {
+					'csrfmiddlewaretoken': '{{ csrf_token }}',
+					'file_id' : file_id,
+				},
+				success : function(response)
+				{
+						alert("삭제 완료");
+            $("#"+file_id).remove();
+				},
+        error : function(request, status, error ){
+          alert("삭제 실패");
+        },
+			});
+ });
 </script>
 {% endblock %}

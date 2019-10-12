@@ -47,7 +47,12 @@ urlpatterns = [
     path('Convergence/usr_list3/',views.usr_list_view3,name='usr_list_view3'),
     path('Convergence/usr_list4/',views.usr_list_view4,name='usr_list_view4'),
 
+    #export user list
+    path('Convergence/export_users_list/<list_num>/', views.export_users_list, name='export_users_list'),
+
+
     #ajax
     path('SignUp_idcheck', views.SignUp_idcheck, name='SignUp_idcheck'), #user id 중복 확인
+    path('Board_edit_file_delete', views.Board_edit_file_delete, name='Board_edit_file_delete'), #게시판 수정시 파일 삭제
 ]
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
