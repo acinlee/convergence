@@ -1,0 +1,196 @@
+{% extends "convergence/base.html" %}
+{% load static %}
+{% load lecture %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!--나눔 고딕-->
+<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<!--주영's 아이콘-->
+<script src="https://kit.fontawesome.com/01bdf36058.js"></script>
+  <div class="container-fluid coachingmain" style="padding-bottom:5%;">
+    <div class="row">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8">
+        <div class="form-group" style="padding-top:3%;">
+          {% if type_num == 1 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">창업과 시장분석 실무</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 2 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">호텔경제</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 3 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">셀프 브랜드 디자인</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 4 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">디자인기반 소프트웨어 시스템 구현과 지식재산</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 5 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">파이썬 기반 텍스트 정보분석 심화</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% elif type_num == 6 %}
+            <label style="font-weight:600; font-size:30px; color:#4d4d4d;">융합모빌리티 종합설계</label><label style="font-size:18px; color:#7c7c7c; padding-left:0.8%;">게시판</label>
+          {% endif %}
+        </div>
+        <div><label style="color:red;">* 각 인원은 수강하는 과목의 게시판만 열람 가능합니다.</label></div>
+        <div class="form-group" style="padding-top:1.5%; vertical-align:middle; font-size:18px;">
+        {% if type_num == 1%}
+          <form name="board_find_form1" style="display:inline;" action="{% url 'convergence:findBoard' 1%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 2 %}
+          <form name="board_find_form2" style="display:inline;" action="{% url 'convergence:findBoard' 2%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 3 %}
+          <form name="board_find_form3" style="display:inline;" action="{% url 'convergence:findBoard' 3%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 4 %}
+          <form name="board_find_form4" style="display:inline;" action="{% url 'convergence:findBoard' 4%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 5 %}
+          <form name="board_find_form5" style="display:inline;" action="{% url 'convergence:findBoard' 5%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 6 %}
+          <form name="board_find_form6" style="display:inline;" action="{% url 'convergence:findBoard' 6%}" method="POST" enctype="multipart/form-data" >
+        {% endif %}
+          {% csrf_token %}
+          <select class="mdb-select md-form" id="board_find" name="board_find" style="width:10%; height:50px; text-align-last:center;">
+            <option value="제목">제목</option>
+            <option value="내용">내용</option>
+          </select>
+          <input type="text" id="board_content_find" name="board_content_find" style="position:relative; left:1%; width:30%; height:50px;" placeholder="   찾고 싶은 내용을 적어주세요">
+          {% if type_num == 1%}
+            <img src="{% static 'convergence/img/magnifyingglass.png'%}" onclick="findcontent(1);" style="cursor:pointer; position:relative; vertical-align:middle; right:2.3%; width:2%; height:2%;">
+          {% elif type_num == 2 %}
+            <img src="{% static 'convergence/img/magnifyingglass.png'%}" onclick="findcontent(2);" style="cursor:pointer; position:relative; vertical-align:middle; right:2.3%; width:2%; height:2%;">
+          {% elif type_num == 3 %}
+            <img src="{% static 'convergence/img/magnifyingglass.png'%}" onclick="findcontent(3);" style="cursor:pointer; position:relative; vertical-align:middle; right:2.3%; width:2%; height:2%;">
+          {% elif type_num == 4 %}
+            <img src="{% static 'convergence/img/magnifyingglass.png'%}" onclick="findcontent(4);" style="cursor:pointer; position:relative; vertical-align:middle; right:2.3%; width:2%; height:2%;">
+          {% elif type_num == 5 %}
+            <img src="{% static 'convergence/img/magnifyingglass.png'%}" onclick="findcontent(5);" style="cursor:pointer; position:relative; vertical-align:middle; right:2.3%; width:2%; height:2%;">
+          {% elif type_num == 6 %}
+            <img src="{% static 'convergence/img/magnifyingglass.png'%}" onclick="findcontent(6);" style="cursor:pointer; position:relative; vertical-align:middle; right:2.3%; width:2%; height:2%;">
+          {% endif %}
+        </form>
+        {% if type_num == 1%}
+          <form name="board_sort_form" style="display:inline;" action="{% url 'convergence:sortBoard' 1%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 2 %}
+          <form name="board_sort_form" style="display:inline;" action="{% url 'convergence:sortBoard' 2%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 3 %}
+          <form name="board_sort_form" style="display:inline;" action="{% url 'convergence:sortBoard' 3%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 4 %}
+          <form name="board_sort_form" style="display:inline;" action="{% url 'convergence:sortBoard' 4%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 5 %}
+          <form name="board_sort_form" style="display:inline;" action="{% url 'convergence:sortBoard' 5%}" method="POST" enctype="multipart/form-data" >
+        {% elif type_num == 6 %}
+          <form name="board_sort_form" style="display:inline;" action="{% url 'convergence:sortBoard' 6%}" method="POST" enctype="multipart/form-data" >
+        {% endif %}
+          {% csrf_token %}
+          <select class="mdb-select md-form" id="board_sort" name="board_sort" onchange="sortcontent();" style="position:relative; left:47%; width:10%; height:50px; text-align-last:center;">
+          {% if sort_numeber == 1 %}
+            <option value="역순">역순</option>
+            <option value="최신순">최신순</option>
+          {% else %}
+            <option value="최신순">최신순</option>
+            <option value="역순">역순</option>
+          {% endif %}
+          </select>
+        </form>
+        </div>
+        <div class="form-group">
+          <table class="table" style="font-size:18px; border-top: 1px solid; border-bottom: 1px solid #dee2e6; text-align:center;">
+            <thead>
+              <tr>
+                <th scope="col" style="width:10%;">번호</th>
+                <th scope="col" style="width:10%;">작성자</th>
+                <th scope="col" style="width:10%;">학년/직책</th>
+                <th scope="col" style="width:10%;">유형</th>
+                <th scope="col" style="width:40%;">제목</th>
+                <th scope="col" style="width:10%;">등록일</th>
+                <th scope="col" style="width:10%;">조회수</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for board_content in posts %}
+              {% csrf_token %}
+                <div>
+                  <tr>
+                    <ul>
+                      <td>{{ board_content.id }}</td>
+                      <td>{{ board_content.Board_User.Convergence_Name }}</td>
+                      {% if board_content.Board_User.Convergence_grade == "6" %}
+                        <td>교수</td>
+                      {% elif board_content.Board_User.Convergence_grade == "7" %}
+                        <td>직원</td>
+                      {% else%}
+                        <td>{{ board_content.Board_User.Convergence_grade }}</td>
+                      {% endif %}
+                      <td>{% if board_content.cb_isLecture %} 강의 {% else %} 게시글 {% endif %}</td>
+                      <td style="text-align:left; color:red;"><a href="{% url 'convergence:viewBoard' board_content.id %}" style="text-decoration:none !important; color:black;">{{ board_content.Board_Title }}</a>({{board_content.comment.count}}) {% is_finished_lecture request.session.convergence_id board_content.lecture %} </td>
+                      <td>{{ board_content.Board_CreateDate|date:"Y/m/d" }}</td>
+                      <td>{{ board_content.Board_hits }}</td>
+                    </ul>
+                  </tr>
+                </div>
+              {% endfor %}
+              </tbody>
+          </table>
+        </div>
+        <div class="row" style=" vertical-align:middle">
+          <div class="col-md-2">
+          </div>
+          <div class="col-md-8" style="padding-top:2%; text-align:center;">
+              {% if posts.has_other_pages %}
+                  {% if posts.has_previous %}
+                    <a style="color:#4d4d4d" href="?page={{ posts.previous_page_number }}"><i class="fas fa-angle-left"></i></a>
+                  {% else %}
+                    <i style="color:#4d4d4d" class="fas fa-angle-left"></i>
+                  {% endif %}
+                  <span>|<span>
+                  {% for i in posts.paginator.page_range %}
+                    {% if posts.number == i %}
+                      <span style="color:#0081ff">{{ i }} <span class="sr-only">(current)</span></span>
+                    {% else %}
+                      <a style="color:#4d4d4d" href="?page={{ i }}">{{ i }}</a>
+                    {% endif %}
+                    <span>|<span>
+                  {% endfor %}
+                  {% if posts.has_next %}
+                    <a style="color:#4d4d4d" href="?page={{ posts.next_page_number }}"><i class="fas fa-angle-right"></i></a>
+                  {% else %}
+                    <span style="color:#4d4d4d"><i class="fas fa-angle-right"></i></span>
+                  {% endif %}
+              {% endif %}
+          </div>
+          <div class="col-md-2" style="text-align:right;">
+            {% if request.session.convergence_id %}
+              <a class="btn btn-outline btn-sm m-0" style="background-color:#dee2e6; width:60%; font-size:18px" href="{% url 'convergence:write_board' %}">작성하기</a>
+            {% endif %}
+          </div>
+        </div>
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+  </div>
+<script>
+
+  function findcontent(typenum){
+    if(typenum=="1"){
+      document.board_find_form1.submit();
+    }
+    else if(typenum="2"){
+      document.board_find_form2.submit();
+    }
+    else if(typenum="3"){
+      document.board_find_form3.submit();
+    }
+    else if(typenum="4"){
+      document.board_find_form4.submit();
+    }
+    else if(typenum="5"){
+      document.board_find_form5.submit();
+    }
+    else if(typenum="6"){
+      document.board_find_form6.submit();
+    }
+  }
+  function sortcontent(){
+    document.board_sort_form.submit();
+  }
+</script>
+{% endblock %}

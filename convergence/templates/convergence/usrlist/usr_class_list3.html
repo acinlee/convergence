@@ -1,0 +1,98 @@
+{% extends "convergence/base.html" %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" type="text/css" href="{% static 'convergence/css/style.css' %}">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<!--나눔 고딕-->
+<link href="https://fonts.googleapis.com/css?family=Nanum+Gothic&display=swap" rel="stylesheet">
+<!--주영's 아이콘-->
+<script src="https://kit.fontawesome.com/01bdf36058.js"></script>
+  <div class="container-fluid coachingmain" style="padding-bottom:5%; padding-left:3%;">
+    <div class="row">
+      <div class="col-md-2">
+      </div>
+      <div class="col-md-8">
+        <div class="form-group">
+        <label style="font-weight:600; font-size:30px; color:#4d4d4d; padding-top:3%;">수강생 목록</label>
+        <div class="row" style="font-size:18px; text-align:center; margin-top:2%;">
+            <div class="col-md-3" style="border-top: 3px solid #bebebe; border-right: 3px solid #bebebe; border-left: 3px solid #bebebe; border-radius:10px 10px 0px 0px;">
+                <div class="form-group">
+                    <a href="{% url 'convergence:usr_list_view1' %}"><label style="padding-top:3%; text-decoration:none !important; color:#8c8c8c; cursor:pointer;">창업과 시장분석 실무</label></a>
+                </div>
+            </div>
+            <div class="col-md-3" style="border-top: 3px solid #bebebe; border-right: 3px solid #bebebe; border-left: 3px solid #bebebe; border-radius:10px 10px 0px 0px;">
+                <div class="form-group">
+                    <a href="{% url 'convergence:usr_list_view2' %}"><label style="padding-top:3%; text-decoration:none !important; color:#8c8c8c; cursor:pointer;">호텔경제</label></a>
+                </div>
+            </div>
+            <div class="col-md-3" style="border-top: 3px solid #323232; border-right: 3px solid #323232; border-left: 3px solid #323232; border-radius:10px 10px 0px 0px;">
+                <div class="form-group">
+                    <a href="{% url 'convergence:usr_list_view3' %}"><label style="padding-top:3%; text-decoration:none !important; color:#323232; cursor:pointer;">셀프 브랜드 디자인</label></a>
+                </div>
+            </div>
+            <div class="col-md-3" style="border-top: 3px solid #bebebe; border-right: 3px solid #bebebe; border-left: 3px solid #bebebe; border-radius:10px 10px 0px 0px;">
+                <div class="form-group">
+                    <a href="{% url 'convergence:usr_list_view4' %}"><label style="padding-top:3%; text-decoration:none !important; color:#8c8c8c; cursor:pointer;">디자인기반 소프트웨어 시스템 구현과 지식재산</label></a>
+                </div>
+            </div>
+            <div class="col-md-3" style="border-top: 3px solid #bebebe; border-right: 3px solid #bebebe; border-left: 3px solid #bebebe; border-radius:10px 10px 0px 0px;">
+                <div class="form-group">
+                    <a href="{% url 'convergence:usr_list_view5' %}"><label style="padding-top:3%; text-decoration:none !important; color:#8c8c8c; cursor:pointer;">파이썬 기반 텍스트 정보분석 심화</label></a>
+                </div>
+            </div>
+            <div class="col-md-3" style="border-top: 3px solid #bebebe; border-right: 3px solid #bebebe; border-left: 3px solid #bebebe; border-radius:10px 10px 0px 0px;">
+                <div class="form-group">
+                    <a href="{% url 'convergence:usr_list_view6' %}"><label style="padding-top:3%; text-decoration:none !important; color:#8c8c8c; cursor:pointer;">융합모빌리티 종합설계</label></a>
+                </div>
+            </div>
+          </div>
+          <table class="table" style="font-size:18px; border-top: 1px solid; border-bottom: 1px solid #dee2e6; text-align:center;">
+            <thead>
+              <tr>
+                <th scope="col" style="width:5%;">번호</th>
+                <th scope="col" style="width:50%;">과목</th>
+                <th scope="col" style="width:10%;">학번</th>
+                <th scope="col" style="width:10%;">학년/직책</th>
+                <th scope="col" style="width:15%;">학과</th>
+                <th scope="col" style="width:10%;">이름</th>
+              </tr>
+            </thead>
+            <tbody>
+            {% for user_list in usr_list %}
+              {% csrf_token %}
+                <div>
+                  <tr>
+                    <ul>
+                      <td>{{ forloop.counter }}</td>
+                      {% if "3" in user_list.Convergence_ClassCode %}
+                        <td>셀프 브랜드 디자인</td>
+                      {% endif %}
+                      <td>{{ user_list.Convergence_ID }}</td>
+		      {% if user_list.Convergence_grade == '6' %}
+                         <td>교수</td>
+                      {% elif user_list.Convergence_grade == '7' %}
+                         <td>직원</td>
+                      {% else %}
+   			 <td>{{ user_list.Convergence_grade }}</td>
+                      {% endif %}
+                      <td>{{ user_list.Convergence_Dept }}</td>
+                      <td>{{ user_list.Convergence_Name }}</td>
+                    </ul>
+                  </tr>
+                </div>
+              {% endfor %}
+              </tbody>
+          </table>
+        </div>
+          <a href="{% url 'convergence:export_users_list' 3%}"><i style="font-size:24px" class="fa">&#xf1c3;</i>수업 인원 목록 다운로드</a>
+        </div>
+      </div>
+      <div class="col-md-2">
+      </div>
+    </div>
+  </div>
+  {% endblock %}
+

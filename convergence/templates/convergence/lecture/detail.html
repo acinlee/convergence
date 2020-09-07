@@ -1,0 +1,53 @@
+
+{% extends 'convergence/lecture/learner_manage.html' %}
+{% block lm_content %}
+
+<style>
+    #_table td:nth-child(1),
+            td:nth-child(2),
+            td:nth-child(5),
+            td:nth-child(6),
+            td:nth-child(7),
+            td:nth-child(8),
+            td:nth-child(9) {
+                text-align : center;
+            }
+</style>
+
+    <h2>{{lecture.l_board.Board_Title}}</h2>
+    <hr>
+    <table id="_table" class='table table-bordered table-hover'>
+        <thead>
+            <th>순번</th>
+            <th>이름</th>
+            <th>학과</th>
+            <th>학번</th>
+            <th>연락처</th>
+            <th>강의명</th>
+            <th>수강 여부</th>
+            <th>수강시간(초)</th>
+            <th>수강 완료 일시</th>
+        </thead>
+        <tbody>
+            {% for ls in lecture_status %}
+                <tr>
+                    <td>{{forloop.counter}}</td>
+                    <td>{{ls.ls_learner.Convergence_Name}}</td>
+                    <td>{{ls.ls_learner.Convergence_Dept}}</td>
+                    <td>{{ls.ls_learner.Convergence_ID}}</td>
+                    <td>{{ls.ls_learner.Convergence_PhoneNumber}}</td>
+                    <td>{{ls.ls_lecture.l_board.Board_Title}}</td>
+                    <td>{% if ls.ls_isFinished %}O{% else %}X{% endif %}</td>
+                    <td>{{ls.ls_learning_time}}</td>
+                    <td>{{ls.ls_finished_at|default_if_none:""}}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+<script>
+    $(function(){
+        $("#_table").tablesorter();        
+    })
+</script>
+{% endblock %}
